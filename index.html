@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Feed Preview — Hej Agency</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --surface: #f7f5f2;
+      --surface2: #eeebe6;
+      --border: #e0dbd3;
+      --text: #1a1714;
+      --text-muted: #9e9890;
+      --text-soft: #6b6358;
+      --accent: #8b7355;
+      --accent2: #6b5540;
+      --green: #16a34a;
+      --yellow: #d97706;
+      --blue: #2563eb;
+      --red: #dc2626;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0;
+    }
+
+    #setup-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .setup-logo {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      margin-bottom: 2.5rem;
+    }
+
+    .setup-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 2rem;
+      font-style: italic;
+      color: var(--text);
+      text-align: center;
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+
+    .setup-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 2.5rem;
+      letter-spacing: 0.03em;
+    }
+
+    .setup-step {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .step-number {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--accent2);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .setup-step label {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      margin-bottom: 0.5rem;
+    }
+
+    .setup-step input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.7rem 0.9rem;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .setup-step input:focus { border-color: var(--accent2); }
+    .setup-step input::placeholder { color: var(--text-muted); }
+
+    .setup-hint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      line-height: 1.5;
+    }
+
+    .btn-primary {
+      width: 100%;
+      margin-top: 1rem;
+      background: var(--accent);
+      color: #0f0f0f;
+      border: none;
+      border-radius: 8px;
+      padding: 0.85rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    #widget-screen {
+      display: none;
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 1rem;
+      padding-top: 1.5rem;
+    }
+
+    .profile-bar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0 0.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .profile-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.2rem;
+      color: #0f0f0f;
+      flex-shrink: 0;
+      border: 2px solid var(--border);
+    }
+
+    .profile-info { flex: 1; }
+
+    .profile-handle {
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    .profile-stats {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    .profile-stats span { margin-right: 0.75rem; }
+
+    .refresh-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 8px;
+      padding: 0.45rem 0.75rem;
+      font-size: 0.7rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .refresh-btn:hover { border-color: var(--accent2); color: var(--text); }
+
+    .legend {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.6rem 0.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      font-family: 'DM Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .legend-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+    .filter-bar {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+      overflow-x: auto;
+      padding-bottom: 0.25rem;
+    }
+
+    .filter-bar::-webkit-scrollbar { display: none; }
+
+    .filter-tab {
+      flex-shrink: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 20px;
+      padding: 0.3rem 0.75rem;
+      font-size: 0.68rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .filter-tab.active, .filter-tab:hover {
+      background: var(--accent2);
+      border-color: var(--accent2);
+      color: #fff;
+    }
+
+    .feed-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .post-cell {
+      position: relative;
+      aspect-ratio: 1;
+      cursor: pointer;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    .post-cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .post-cell:hover img { transform: scale(1.04); }
+
+    .post-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.5rem;
+    }
+
+    .placeholder-type { font-size: 1.1rem; }
+
+    .placeholder-theme {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      color: rgba(0,0,0,0.4);
+      text-align: center;
+      line-height: 1.3;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0 0.25rem;
+    }
+
+    .status-badge {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(0,0,0,0.5);
+    }
+
+    .date-badge {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      background: rgba(255,255,255,0.85);
+      color: rgba(0,0,0,0.7);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.55rem;
+      padding: 2px 5px;
+      border-radius: 3px;
+    }
+
+    .post-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.2s;
+      backdrop-filter: blur(2px);
+    }
+
+    .post-cell:hover .post-overlay { opacity: 1; }
+
+    .overlay-theme {
+      font-family: 'Instrument Serif', serif;
+      font-size: 0.85rem;
+      font-style: italic;
+      color: var(--accent);
+      text-align: center;
+      margin-bottom: 0.35rem;
+    }
+
+    .overlay-type {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.35rem;
+    }
+
+    .overlay-date { font-size: 0.65rem; color: var(--text-soft); }
+
+    .post-cell.swap-selected {
+      outline: 2px solid var(--accent);
+      outline-offset: -2px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .toolbar-left { display: flex; gap: 0.5rem; }
+
+    .tool-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 8px;
+      padding: 0.5rem 0.85rem;
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .tool-btn:hover { border-color: var(--accent2); color: var(--text); }
+    .tool-btn.active { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+
+    .config-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      cursor: pointer;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.05em;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    #detail-panel {
+      display: none;
+      margin-top: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .detail-theme {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.15rem;
+      font-style: italic;
+      color: var(--text);
+    }
+
+    .detail-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .detail-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .detail-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.6rem;
+      align-items: baseline;
+    }
+
+    .detail-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      flex-shrink: 0;
+      width: 90px;
+    }
+
+    .detail-value { font-size: 0.78rem; color: var(--text-soft); line-height: 1.4; }
+
+    .detail-caption {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      line-height: 1.5;
+      background: var(--surface2);
+      border-radius: 6px;
+      padding: 0.75rem;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    .status-publié    { background: var(--green); }
+    .status-planifié  { background: var(--blue); }
+    .status-brouillon { background: var(--yellow); }
+    .status-à-valider { background: var(--yellow); }
+    .status-archivé   { background: var(--text-muted); }
+    .status-default   { background: var(--text-muted); }
+
+    .bg-reel      { background: linear-gradient(135deg, #e8e0f0 0%, #d4c5e8 100%); }
+    .bg-photo     { background: linear-gradient(135deg, #dff0e8 0%, #c5e0d0 100%); }
+    .bg-carrousel { background: linear-gradient(135deg, #f0e8d8 0%, #e0d0b8 100%); }
+    .bg-story     { background: linear-gradient(135deg, #dce8f8 0%, #c8d8ee 100%); }
+    .bg-default   { background: linear-gradient(135deg, #f0ede8 0%, #e5e0d8 100%); }
+
+    #swap-bar {
+      display: none;
+      margin-top: 0.75rem;
+      background: var(--surface);
+      border: 1px solid var(--accent2);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      text-align: center;
+    }
+
+    #swap-bar .swap-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-top: 0.6rem;
+    }
+
+    .swap-confirm {
+      background: var(--accent2);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.4rem 0.9rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .swap-cancel {
+      background: var(--surface2);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.4rem 0.9rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    #loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 1rem;
+    }
+
+    .loader {
+      width: 32px;
+      height: 32px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    .error-box {
+      background: rgba(248,113,113,0.08);
+      border: 1px solid rgba(248,113,113,0.25);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      color: var(--red);
+      line-height: 1.5;
+    }
+
+    .watermark {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 1.5rem 0 0.75rem;
+      opacity: 0.4;
+      letter-spacing: 0.08em;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in { animation: fadeIn 0.35s ease both; }
+  </style>
+</head>
+<body>
+
+<div id="setup-screen">
+  <div class="setup-logo">Hej Agency ✦ Feed Preview</div>
+  <div class="setup-title">Planning éditorial<br>→ Feed Instagram</div>
+  <div class="setup-sub">Configure une fois, intègre partout dans Notion</div>
+
+  <div class="setup-step">
+    <div class="step-number">Étape 01 — Token Notion</div>
+    <label>Token secret de ton intégration</label>
+    <input type="password" id="inp-token" placeholder="secret_xxxxxxxxxxxxxxxx" />
+    <p class="setup-hint">notion.so/my-integrations → Nouvelle intégration → Copier le token<br>Puis base du client → ··· → Connexions → ajoute l'intégration</p>
+  </div>
+
+  <div class="setup-step">
+    <div class="step-number">Étape 02 — Base Notion</div>
+    <label>Database ID (32 caractères)</label>
+    <input type="text" id="inp-db" placeholder="2e904d7f8294815986c7e55495128afd" />
+    <p class="setup-hint">Dans l'URL : notion.so/<strong>DATABASE_ID</strong>?v=...</p>
+  </div>
+
+  <div class="setup-step">
+    <div class="step-number">Étape 03 — Compte</div>
+    <label>Handle Instagram du client</label>
+    <input type="text" id="inp-handle" placeholder="@nomduclient" />
+  </div>
+
+  <button class="btn-primary" onclick="startWidget()">Charger le feed →</button>
+  <div id="setup-error"></div>
+
+  <p class="setup-hint" style="text-align:center; margin-top:1.5rem;">
+    Paramètres aussi passables via URL :<br>
+    <code style="color:var(--accent2)">?token=…&db=…&handle=…</code>
+  </p>
+</div>
+
+<div id="loading" style="display:none;">
+  <div class="loader"></div>
+  <div class="loading-text">Chargement du planning…</div>
+</div>
+
+<div id="widget-screen">
+  <div class="profile-bar">
+    <div class="profile-avatar" id="avatar-initials">?</div>
+    <div class="profile-info">
+      <div class="profile-handle" id="profile-handle">@client</div>
+      <div class="profile-stats">
+        <span id="stat-total">— posts</span>
+        <span id="stat-published">— publiés</span>
+        <span id="stat-upcoming">— à venir</span>
+      </div>
+    </div>
+    <button class="refresh-btn" onclick="loadData()">↺ Actualiser</button>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot status-publié"></div>Publié</div>
+    <div class="legend-item"><div class="legend-dot status-planifié"></div>Planifié</div>
+    <div class="legend-item"><div class="legend-dot status-brouillon"></div>Brouillon</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--text-muted)"></div>Archivé</div>
+  </div>
+
+  <div class="filter-bar">
+    <div class="filter-tab active" onclick="setFilter('all', this)">Tout</div>
+    <div class="filter-tab" onclick="setFilter('Reel', this)">Reel</div>
+    <div class="filter-tab" onclick="setFilter('Photo', this)">Photo</div>
+    <div class="filter-tab" onclick="setFilter('Carrousel', this)">Carrousel</div>
+    <div class="filter-tab" onclick="setFilter('Story', this)">Story</div>
+  </div>
+
+  <div class="feed-grid" id="feed-grid"></div>
+
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <button class="tool-btn" id="swap-btn" onclick="toggleSwapMode()">⇄ Échanger dates</button>
+    </div>
+    <button class="config-btn" onclick="showSetup()">Reconfigurer</button>
+  </div>
+
+  <div id="swap-bar">
+    <span id="swap-status">Sélectionne deux posts pour échanger leurs dates</span>
+    <div class="swap-actions">
+      <button class="swap-cancel" onclick="cancelSwap()">Annuler</button>
+      <button class="swap-confirm" id="swap-confirm-btn" onclick="confirmSwap()" style="display:none">Confirmer l'échange</button>
+    </div>
+  </div>
+
+  <div id="detail-panel">
+    <div class="detail-header">
+      <div>
+        <div class="detail-theme" id="d-theme">—</div>
+        <div class="detail-date" id="d-date">—</div>
+      </div>
+      <button class="detail-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="detail-row"><div class="detail-label">Type</div><div class="detail-value" id="d-type">—</div></div>
+    <div class="detail-row"><div class="detail-label">Thématique</div><div class="detail-value" id="d-thematique">—</div></div>
+    <div class="detail-row"><div class="detail-label">Statut</div><div class="detail-value" id="d-statut">—</div></div>
+    <div class="detail-row"><div class="detail-label">Validation</div><div class="detail-value" id="d-validation">—</div></div>
+    <div class="detail-row"><div class="detail-label">Commentaires</div><div class="detail-value" id="d-comments">—</div></div>
+    <div class="detail-caption" id="d-caption" style="display:none"></div>
+  </div>
+
+  <div class="watermark">Hej Agency ✦ Feed Preview Widget</div>
+</div>
+
+<script>
+let CONFIG = { token: '', db: '', handle: '' };
+let ALL_POSTS = [];
+let currentFilter = 'all';
+let swapMode = false;
+let swapSelected = [];
+let DATE_PROP_NAME = 'Date';
+
+const PROP = {
+  date:        ['Date', 'date', 'Date de publication'],
+  theme:       ['Thème', 'Theme', 'thème', 'Titre', 'titre', 'Name', 'Nom'],
+  type:        ['Type', 'type', 'Format', 'format'],
+  thematique:  ['Thématique', 'Thematique', 'thematique', 'Catégorie'],
+  statut:      ['Statut', 'Status', 'statut', 'status', 'État'],
+  contenu:     ['Contenu à publier', 'Contenu', 'contenu', 'Description'],
+  wording:     ['Wording', 'wording', 'Caption', 'Légende', 'Texte'],
+  comments:    ['Commentaires', 'commentaires', 'Comments', 'Notes'],
+  validation:  ['Validation', 'validation', 'Validé'],
+  image:       ['Visuel', 'Image', 'Cover', 'Couverture', 'Photo', 'Miniature'],
+};
+
+(function init() {
+  const p = new URLSearchParams(window.location.search);
+  const token = p.get('token') || '';
+  const db    = p.get('db')    || '';
+  const handle= p.get('handle')|| '';
+  if (token && db) {
+    CONFIG = { token, db, handle };
+    loadData();
+  }
+})();
+
+function showSetup() {
+  document.getElementById('setup-screen').style.display = 'flex';
+  document.getElementById('widget-screen').style.display = 'none';
+  document.getElementById('loading').style.display = 'none';
+}
+
+function startWidget() {
+  const token  = document.getElementById('inp-token').value.trim();
+  const db     = document.getElementById('inp-db').value.trim().replace(/-/g,'');
+  const handle = document.getElementById('inp-handle').value.trim();
+  if (!token || !db) {
+    document.getElementById('setup-error').innerHTML =
+      '<div class="error-box">Token et Database ID requis.</div>';
+    return;
+  }
+  CONFIG = { token, db, handle };
+  const url = new URL(window.location.href);
+  url.searchParams.set('token', token);
+  url.searchParams.set('db', db);
+  url.searchParams.set('handle', handle);
+  window.history.replaceState({}, '', url.toString());
+  loadData();
+}
+
+const WORKER = 'https://previewfeed-hejagency.leloupdort.workers.dev';
+
+async function notionQuery(body) {
+  const { token, db, pageId, dates } = body;
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Notion-Version': '2022-06-28',
+    'Content-Type': 'application/json',
+  };
+
+  // SWAP : mise à jour de deux pages
+  if (pageId && dates) {
+    const { idA, idB, dateA, dateB, dateProp } = dates;
+    const [rA, rB] = await Promise.all([
+      fetch(WORKER + `?target=${encodeURIComponent("https://api.notion.com/v1/pages/" + idA)}`), {
+        method: 'PATCH', headers,
+        body: JSON.stringify({ properties: { [dateProp]: { date: { start: dateA } } } }),
+      }),
+      fetch(WORKER + `?target=${encodeURIComponent("https://api.notion.com/v1/pages/" + idB)}`), {
+        method: 'PATCH', headers,
+        body: JSON.stringify({ properties: { [dateProp]: { date: { start: dateB } } } }),
+      }),
+    ]);
+    if (!rA.ok) throw new Error((await rA.json()).message);
+    if (!rB.ok) throw new Error((await rB.json()).message);
+    return { ok: true };
+  }
+
+  // QUERY : récupérer les posts
+  const res = await fetch(WORKER + `?target=${encodeURIComponent("https://api.notion.com/v1/databases/" + db + "/query")}`), {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      sorts: [{ property: 'Date', direction: 'ascending' }],
+      page_size: 100,
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || `Erreur ${res.status}`);
+  return data;
+}
+
+async function loadData() {
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('widget-screen').style.display = 'none';
+  document.getElementById('loading').style.display = 'flex';
+
+  try {
+    const data = await notionQuery({ token: CONFIG.token, db: CONFIG.db });
+    ALL_POSTS = data.results.map(parsePost);
+
+    // Detect actual date property name from first post
+    if (data.results.length > 0) {
+      const props = data.results[0].properties;
+      for (const name of PROP.date) {
+        if (props[name]) { DATE_PROP_NAME = name; break; }
+      }
+    }
+
+    renderWidget();
+  } catch(e) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('setup-screen').style.display = 'flex';
+    document.getElementById('setup-error').innerHTML =
+      `<div class="error-box">Erreur : ${e.message}<br><small>Vérifie le token, le database ID et que l'intégration a accès à la base.</small></div>`;
+  }
+}
+
+function findProp(props, field) {
+  for (const name of PROP[field]) {
+    if (props[name] !== undefined) return name;
+  }
+  return null;
+}
+
+function getProp(props, field) {
+  const name = findProp(props, field);
+  if (!name || !props[name]) return '';
+  const p = props[name];
+  switch(p.type) {
+    case 'title':        return p.title.map(t => t.plain_text).join('');
+    case 'rich_text':    return p.rich_text.map(t => t.plain_text).join('');
+    case 'select':       return p.select?.name || '';
+    case 'multi_select': return p.multi_select.map(s => s.name).join(', ');
+    case 'date':         return p.date?.start || '';
+    case 'checkbox':     return p.checkbox ? '✓' : '✗';
+    case 'url':          return p.url || '';
+    case 'files':        return p.files[0]?.file?.url || p.files[0]?.external?.url || '';
+    default:             return '';
+  }
+}
+
+function parsePost(page) {
+  const p = page.properties;
+  return {
+    id: page.id,
+    date:       getProp(p,'date'),
+    theme:      getProp(p,'theme'),
+    type:       getProp(p,'type'),
+    thematique: getProp(p,'thematique'),
+    statut:     getProp(p,'statut'),
+    contenu:    getProp(p,'contenu'),
+    wording:    getProp(p,'wording'),
+    comments:   getProp(p,'comments'),
+    validation: getProp(p,'validation'),
+    image:      getProp(p,'image'),
+  };
+}
+
+function renderWidget() {
+  const h = CONFIG.handle || 'client';
+  document.getElementById('profile-handle').textContent = h;
+  document.getElementById('avatar-initials').textContent = h.replace('@','').slice(0,2).toUpperCase();
+
+  const published = ALL_POSTS.filter(p => norm(p.statut) === 'publié').length;
+  const upcoming  = ALL_POSTS.filter(p => ['planifié','à-valider'].includes(norm(p.statut))).length;
+  document.getElementById('stat-total').textContent     = `${ALL_POSTS.length} posts`;
+  document.getElementById('stat-published').textContent = `${published} publiés`;
+  document.getElementById('stat-upcoming').textContent  = `${upcoming} à venir`;
+
+  renderGrid();
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('widget-screen').style.display = 'block';
+  document.getElementById('widget-screen').classList.add('fade-in');
+}
+
+function norm(str) {
+  return (str||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'-');
+}
+
+function renderGrid() {
+  const grid = document.getElementById('feed-grid');
+  grid.innerHTML = '';
+  const posts = currentFilter === 'all'
+    ? ALL_POSTS
+    : ALL_POSTS.filter(p => norm(p.type) === norm(currentFilter));
+
+  posts.forEach((post, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'post-cell fade-in';
+    cell.style.animationDelay = `${i * 0.04}s`;
+
+    const typeClass = 'bg-' + (norm(post.type) || 'default');
+    const inner = post.image
+      ? `<img src="${post.image}" alt="${post.theme}" loading="lazy" />`
+      : `<div class="post-placeholder ${typeClass}">
+           <div class="placeholder-type">${typeEmoji(post.type)}</div>
+           <div class="placeholder-theme">${post.theme || post.thematique || '—'}</div>
+         </div>`;
+
+    cell.innerHTML = `
+      ${inner}
+      ${post.date ? `<div class="date-badge">${fmtShort(post.date)}</div>` : ''}
+      <div class="post-overlay">
+        <div class="overlay-type">${post.type || '—'}</div>
+        <div class="overlay-theme">${post.theme || '—'}</div>
+        <div class="overlay-date">${fmtDate(post.date)}</div>
+      </div>
+      <div class="status-badge status-${norm(post.statut) || 'default'}"></div>
+    `;
+    cell.addEventListener('click', () => handleCellClick(post, cell));
+    grid.appendChild(cell);
+  });
+}
+
+function fmtShort(d) {
+  const dt = new Date(d);
+  return isNaN(dt) ? '' : `${dt.getDate()}/${dt.getMonth()+1}`;
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  return isNaN(dt) ? d : dt.toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+}
+
+function typeEmoji(t) {
+  const n = norm(t||'');
+  if (n==='reel') return '▶';
+  if (n==='carrousel') return '◫';
+  if (n==='story') return '○';
+  return '□';
+}
+
+function setFilter(val, el) {
+  currentFilter = val;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  closeDetail();
+  renderGrid();
+}
+
+function handleCellClick(post, cell) {
+  if (swapMode) { handleSwapSelect(post, cell); return; }
+  openDetail(post);
+}
+
+function openDetail(post) {
+  document.getElementById('d-theme').textContent     = post.theme || '—';
+  document.getElementById('d-date').textContent      = fmtDate(post.date);
+  document.getElementById('d-type').textContent      = post.type || '—';
+  document.getElementById('d-thematique').textContent= post.thematique || '—';
+  document.getElementById('d-statut').textContent    = post.statut || '—';
+  document.getElementById('d-validation').textContent= post.validation || '—';
+  document.getElementById('d-comments').textContent  = post.comments || '—';
+  const cap = post.wording || post.contenu;
+  const capEl = document.getElementById('d-caption');
+  capEl.style.display = cap ? 'block' : 'none';
+  if (cap) capEl.textContent = cap;
+  const panel = document.getElementById('detail-panel');
+  panel.style.display = 'block';
+  panel.classList.add('fade-in');
+  panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function closeDetail() {
+  document.getElementById('detail-panel').style.display = 'none';
+}
+
+function toggleSwapMode() {
+  swapMode = !swapMode;
+  swapSelected = [];
+  document.getElementById('swap-btn').classList.toggle('active', swapMode);
+  document.getElementById('swap-bar').style.display = swapMode ? 'block' : 'none';
+  document.getElementById('swap-status').textContent = 'Sélectionne deux posts pour échanger leurs dates';
+  document.getElementById('swap-confirm-btn').style.display = 'none';
+  document.querySelectorAll('.post-cell').forEach(c => c.classList.remove('swap-selected'));
+  closeDetail();
+}
+
+function handleSwapSelect(post, cell) {
+  if (swapSelected.find(s => s.post.id === post.id)) return;
+  swapSelected.push({ post, cell });
+  cell.classList.add('swap-selected');
+  if (swapSelected.length === 1) {
+    document.getElementById('swap-status').textContent =
+      `"${post.theme || fmtDate(post.date)}" sélectionné — choisis le 2e post`;
+  }
+  if (swapSelected.length === 2) {
+    const [a,b] = swapSelected.map(s=>s.post);
+    document.getElementById('swap-status').textContent =
+      `Échanger "${a.theme||fmtDate(a.date)}" ↔ "${b.theme||fmtDate(b.date)}" ?`;
+    document.getElementById('swap-confirm-btn').style.display = 'inline-block';
+  }
+}
+
+function cancelSwap() {
+  swapMode = false; swapSelected = [];
+  document.getElementById('swap-btn').classList.remove('active');
+  document.getElementById('swap-bar').style.display = 'none';
+  document.querySelectorAll('.post-cell').forEach(c => c.classList.remove('swap-selected'));
+}
+
+async function confirmSwap() {
+  if (swapSelected.length < 2) return;
+  const [a,b] = swapSelected.map(s=>s.post);
+  document.getElementById('swap-status').textContent = 'Mise à jour dans Notion…';
+  document.getElementById('swap-confirm-btn').disabled = true;
+  try {
+    await notionQuery({
+      token: CONFIG.token,
+      pageId: true,
+      dates: { idA: a.id, idB: b.id, dateA: b.date, dateB: a.date, dateProp: DATE_PROP_NAME }
+    });
+    a.date = [b.date, b.date = a.date][0];
+    document.getElementById('swap-status').textContent = '✓ Dates échangées !';
+    setTimeout(() => { cancelSwap(); renderGrid(); }, 1200);
+  } catch(e) {
+    document.getElementById('swap-status').textContent = `Erreur : ${e.message}`;
+    document.getElementById('swap-confirm-btn').disabled = false;
+  }
+}
+</script>
+</body>
+</html>
